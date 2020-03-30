@@ -15,6 +15,6 @@ func Mem(out chan<- []byte) error {
 		}
 		m, err := host.Memory()
 		out <- []byte(fmt.Sprintf("%d", m.Used))
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(time.Duration(rand.Intn(999)) * time.Millisecond)
 	}
 }

@@ -16,6 +16,6 @@ func CPU(out chan<- []byte) error {
 		cpu, err := host.CPUTime()
 
 		out <- []byte(fmt.Sprintf("%d", cpu.Total()))
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(time.Duration(rand.Intn(999)) * time.Millisecond)
 	}
 }
