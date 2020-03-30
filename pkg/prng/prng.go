@@ -37,24 +37,25 @@ func PRNG(ctx context.Context, src <-chan []byte, output chan<- []byte) error {
 				return nil
 			}
 
-			_, err := s.Write(pool)
+			_, err := s.Write(input)
 			if err != nil {
 				return err
 			}
-			_, err = s.Write(input)
+			_, err = s.Write(pool)
 			if err != nil {
 				return err
 			}
 
-			pool = s.Sum(pool)
+			_, err = s.Write([]byte(fmt.Sprint(count)))
+			if err != nil {
+				return err
+			}
 
-			s.Reset()
+			pool = s.Sum([]byte{})
+			output <- pool
+
 			count++
 
-			if count > 2 {
-				output <- pool
-				pool = []byte{}
-			}
 		case <-ctx.Done():
 			return ctx.Err()
 		}
