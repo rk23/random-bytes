@@ -8,6 +8,7 @@ import (
 	"github.com/elastic/go-sysinfo"
 )
 
+// CPU puts random CPU time data onto the output channel
 func CPU(out chan<- []byte) error {
 	for {
 		host, err := sysinfo.Host()

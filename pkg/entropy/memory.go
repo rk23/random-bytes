@@ -8,6 +8,7 @@ import (
 	"github.com/elastic/go-sysinfo"
 )
 
+// Mem puts random memory data onto the output channel
 func Mem(out chan<- []byte) error {
 	for {
 		host, err := sysinfo.Host()

@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// Write takes the bytes outputed by the PRNG and writes them to standard out
 func Write(ctx context.Context, input <-chan []byte) error {
 	for {
 		select {
@@ -23,6 +24,7 @@ func Write(ctx context.Context, input <-chan []byte) error {
 
 }
 
+// PRNG accepts a channel of bytes to steer into the entropy pool
 func PRNG(ctx context.Context, src <-chan []byte, output chan<- []byte) error {
 	s := sha512.New()
 	pool := []byte{}
