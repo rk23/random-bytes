@@ -1,30 +1,32 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+
+	"golang.org/x/sync/errgroup"
 
 	"github.com/rk23/symbiont/pkg/entropy"
 	"github.com/rk23/symbiont/pkg/prng"
 )
 
 func main() {
-
+	ctx := context.Background()
 	input := make(chan []byte)
 	output := make(chan []byte)
 
-	go entropy.Mem(input)
-	go entropy.CPU(input)
-	go prng.PRNG(input, output)
+	g, ctx := errgroup.WithContext(ctx)
 
-	for {
-		select {
-		case input, more := <-output:
-			if !more {
-				os.Exit(0)
-			}
-			fmt.Println(string(input))
-		}
+	g.Go(func() error { return entropy.Mem(input) })
+	g.Go(func() error { return entropy.CPU(input) })
+	g.Go(func() error { return prng.PRNG(ctx, input, output) })
+	g.Go(func() error { return prng.Write(ctx, output) })
+
+	err := g.Wait()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(-1)
 	}
 
 }
