@@ -17,7 +17,6 @@ func TestMem(t *testing.T) {
 	// Sleeping in tests isn't ideal - tests should be fast. Given more time would create an entropy struct
 	// with a sleep time. Main would set it to random while tests would set to zero
 	time.Sleep(3 * time.Second)
-	ctx.Done()
 
 	x, y := <-input, <-input
 
