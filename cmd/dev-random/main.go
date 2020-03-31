@@ -7,8 +7,8 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/rk23/symbiont/pkg/entropy"
-	"github.com/rk23/symbiont/pkg/prng"
+	"github.com/rk23/random-bytes/pkg/entropy"
+	"github.com/rk23/random-bytes/pkg/prng"
 )
 
 func main() {
