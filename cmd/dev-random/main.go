@@ -18,8 +18,8 @@ func main() {
 
 	g, ctx := errgroup.WithContext(ctx)
 
-	g.Go(func() error { return entropy.Mem(input) })
-	g.Go(func() error { return entropy.CPU(input) })
+	g.Go(func() error { return entropy.Mem(ctx, input) })
+	g.Go(func() error { return entropy.CPU(ctx, input) })
 	g.Go(func() error { return prng.PRNG(ctx, input, output) })
 	g.Go(func() error { return prng.Write(ctx, output) })
 

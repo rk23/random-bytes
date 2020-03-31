@@ -1,6 +1,7 @@
 package entropy
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"time"
@@ -9,19 +10,25 @@ import (
 )
 
 // Mem puts random memory data onto the output channel
-func Mem(out chan<- []byte) error {
+func Mem(ctx context.Context, out chan<- []byte) error {
 	for {
-		host, err := sysinfo.Host()
-		if err != nil {
-			return err
-		}
+		select {
+		case <-ctx.Done():
+			// TODO: Clean up work done here i.e. logging
+			return ctx.Err()
+		default:
+			host, err := sysinfo.Host()
+			if err != nil {
+				return err
+			}
 
-		m, err := host.Memory()
-		if err != nil {
-			return err
-		}
+			m, err := host.Memory()
+			if err != nil {
+				return err
+			}
 
-		out <- []byte(fmt.Sprintf("%d", m.Used))
-		time.Sleep(time.Duration(rand.Intn(999)) * time.Millisecond)
+			out <- []byte(fmt.Sprintf("%d", m.Used))
+			time.Sleep(time.Duration(rand.Intn(999)) * time.Millisecond)
+		}
 	}
 }

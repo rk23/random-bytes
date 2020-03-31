@@ -1,6 +1,7 @@
 package entropy
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"time"
@@ -9,19 +10,24 @@ import (
 )
 
 // CPU puts random CPU time data onto the output channel
-func CPU(out chan<- []byte) error {
+func CPU(ctx context.Context, out chan<- []byte) error {
 	for {
-		host, err := sysinfo.Host()
-		if err != nil {
-			return err
-		}
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			host, err := sysinfo.Host()
+			if err != nil {
+				return err
+			}
 
-		cpu, err := host.CPUTime()
-		if err != nil {
-			return err
-		}
+			cpu, err := host.CPUTime()
+			if err != nil {
+				return err
+			}
 
-		out <- []byte(fmt.Sprintf("%d", cpu.Total()))
-		time.Sleep(time.Duration(rand.Intn(999)) * time.Millisecond)
+			out <- []byte(fmt.Sprintf("%d", cpu.Total()))
+			time.Sleep(time.Duration(rand.Intn(999)) * time.Millisecond)
+		}
 	}
 }

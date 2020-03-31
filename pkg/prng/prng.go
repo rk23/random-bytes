@@ -26,6 +26,8 @@ func Write(ctx context.Context, input <-chan []byte) error {
 
 // PRNG accepts a channel of bytes to steer into the entropy pool
 func PRNG(ctx context.Context, src <-chan []byte, output chan<- []byte) error {
+	defer close(output)
+
 	s := sha512.New()
 	pool := []byte{}
 	count := 0
@@ -59,6 +61,7 @@ func PRNG(ctx context.Context, src <-chan []byte, output chan<- []byte) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		}
+
 	}
 
 }
